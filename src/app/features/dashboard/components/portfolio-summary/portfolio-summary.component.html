@@ -1,0 +1,52 @@
+<div *ngIf="isLoading; else summaryData" class="row text-center">
+    <div class="col-md-4 mb-3" *ngFor="let i of [1,2,3]"> <div class="card placeholder-glow">
+        <div class="card-body">
+          <h5 class="card-title placeholder col-6"></h5>
+          <p class="card-text display-6 placeholder col-8"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template #summaryData>
+    <div *ngIf="summary; else noSummary" class="row text-center">
+      <div class="col-md-4 mb-3">
+        <div class="card text-white bg-primary shadow">
+          <div class="card-header">Total Portfolio Value</div>
+          <div class="card-body">
+            <h5 class="card-title display-6">
+              {{ summary.totalPortfolioValue | currency:'USD':'symbol':'1.2-2' }}
+            </h5>
+          </div>
+        </div>
+      </div>
+  
+      <div class="col-md-4 mb-3">
+        <div class="card text-white shadow" [ngClass]="summary.totalGainLoss >= 0 ? 'bg-success' : 'bg-danger'">
+          <div class="card-header">Total Gain/Loss</div>
+          <div class="card-body">
+            <h5 class="card-title display-6">
+              {{ summary.totalGainLoss | currency:'USD':'symbol':'1.2-2' }}
+              <span *ngIf="summary.totalGainLoss >= 0" class="fs-5 align-middle"><i class="fas fa-arrow-up"></i></span>
+              <span *ngIf="summary.totalGainLoss < 0" class="fs-5 align-middle"><i class="fas fa-arrow-down"></i></span>
+            </h5>
+          </div>
+        </div>
+      </div>
+  
+      <div class="col-md-4 mb-3">
+        <div class="card text-dark bg-info shadow"> <div class="card-header">Number of Assets</div>
+          <div class="card-body">
+            <h5 class="card-title display-6">{{ summary.numberOfAssets }}</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  
+  <ng-template #noSummary>
+    <div *ngIf="!isLoading" class="alert alert-warning" role="alert">
+      Portfolio summary data is not available at the moment.
+    </div>
+  </ng-template>
+  

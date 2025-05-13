@@ -1,0 +1,65 @@
+<div *ngIf="isLoading && !(investments$ | async)" class="text-center my-5">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading investments...</span>
+  </div>
+  <p class="mt-2">Loading investments...</p>
+</div>
+
+<div *ngIf="errorLoading && !isLoading" class="alert alert-danger" role="alert">
+  <i class="fas fa-exclamation-triangle me-2"></i>
+  Failed to load investments. Please try refreshing the page or contact support.
+</div>
+
+<div *ngIf="(investments$ | async) as investments; else noDataOrLoading">
+  <div *ngIf="investments.length > 0; else noInvestments" class="table-responsive shadow-sm rounded">
+    <table class="table table-hover table-striped align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">Asset Name</th>
+          <th scope="col">Type</th>
+          <th scope="col" class="text-end">Quantity</th>
+          <th scope="col" class="text-end">Purchase Price</th>
+          <th scope="col">Purchase Date</th>
+          <th scope="col" class="text-end">Current Price</th>
+          <th scope="col" class="text-end">Total Value</th>
+          <th scope="col" class="text-end">Gain/Loss</th>
+          <th scope="col" class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let inv of investments;">
+          <td>{{ inv.assetName }}</td>
+          <td>{{ inv.assetType }}</td>
+          <td class="text-end">{{ inv.quantity | number }}</td>
+          <td class="text-end">{{ inv.purchasePrice | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td>{{ inv.purchaseDate | date:'mediumDate' }}</td> <td class="text-end">{{ (inv.currentPrice ?? inv.purchasePrice) | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td class="text-end fw-semibold">{{ calculateCurrentValue(inv) | currency:'USD':'symbol':'1.2-2' }}</td>
+          <td class="text-end fw-semibold" [ngClass]="calculateGainLoss(inv) >= 0 ? 'text-success' : 'text-danger'">
+            {{ calculateGainLoss(inv) | currency:'USD':'symbol':'1.2-2' }}
+            <i *ngIf="calculateGainLoss(inv) >= 0" class="fas fa-arrow-up fa-xs"></i>
+            <i *ngIf="calculateGainLoss(inv) < 0" class="fas fa-arrow-down fa-xs"></i>
+          </td>
+          <td class="text-center">
+            <button title="Edit Investment" class="btn btn-sm btn-outline-primary me-2" (click)="editInvestment(inv.id)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button title="Delete Investment" class="btn btn-sm btn-outline-danger" (click)="deleteInvestment(inv.id)">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<ng-template #noDataOrLoading>
+  </ng-template>
+
+<ng-template #noInvestments>
+  <div *ngIf="!isLoading && !errorLoading" class="alert alert-info text-center" role="alert">
+    <i class="fas fa-info-circle me-2"></i>
+    You haven't added any investments yet.
+    <a routerLink="/investments/new" class="alert-link">Add your first investment</a> to get started!
+  </div>
+</ng-template>

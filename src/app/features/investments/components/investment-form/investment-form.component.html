@@ -1,0 +1,132 @@
+<div class="container mt-3 mb-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h2 class="h4 mb-0">{{ isEditMode ? 'Edit Investment' : 'Add New Investment' }}</h2>
+        </div>
+        <div class="card-body">
+          <div *ngIf="isLoading && isEditMode" class="text-center my-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading investment data...</span>
+            </div>
+            <p class="mt-2">Loading investment data...</p>
+          </div>
+
+          <form [formGroup]="investmentForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading || !isEditMode" novalidate>
+            <div class="mb-3">
+              <label for="assetName" class="form-label">Asset Name / Ticker <span class="text-danger">*</span></label>
+              <input type="text" id="assetName" class="form-control" formControlName="assetName"
+                placeholder="e.g., Apple Inc. or AAPL"
+                [ngClass]="{ 'is-invalid': investmentForm.controls['assetName'].invalid && (investmentForm.controls['assetName'].dirty || investmentForm.controls['assetName'].touched) }">
+              <div
+                *ngIf="investmentForm.controls['assetName'].invalid && (investmentForm.controls['assetName'].dirty || investmentForm.controls['assetName'].touched)"
+                class="invalid-feedback"></div>
+              <div *ngIf="investmentForm.controls['assetName'].errors?.['required']">Asset name is required.</div>
+              <div *ngIf="investmentForm.controls['assetName'].errors?.['minlength']">Asset name must be at least 2
+                characters.</div>
+              <div *ngIf="investmentForm.controls['assetName'].errors?.['maxlength']">Asset name cannot exceed 100
+                characters.</div>
+            </div>
+
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="assetType" class="form-label">Asset Type <span class="text-danger">*</span></label>
+                <select id="assetType" class="form-select" formControlName="assetType"
+                  [ngClass]="{ 'is-invalid': investmentForm.controls['assetType'].invalid && (investmentForm.controls['assetType'].dirty || investmentForm.controls['assetType'].touched) }">
+                  <option value="" disabled>Select asset type...</option>
+                  <option *ngFor="let type of assetTypes" [value]="type">{{ type }}</option>
+                </select>
+                <div
+                  *ngIf="investmentForm.controls['assetType'].invalid && (investmentForm.controls['assetType'].dirty || investmentForm.controls['assetType'].touched)"
+                  class="invalid-feedback">
+                  <div *ngIf="investmentForm.controls['assetType'].errors?.['required']">Asset type is required.</div>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="purchaseDate" class="form-label">Purchase Date <span class="text-danger">*</span></label>
+                <input type="date" id="purchaseDate" class="form-control" formControlName="purchaseDate"
+                  [ngClass]="{ 'is-invalid': investmentForm.controls['purchaseDate'].invalid && (investmentForm.controls['purchaseDate'].dirty || investmentForm.controls['purchaseDate'].touched) }">
+                <div
+                  *ngIf="investmentForm.controls['purchaseDate'].invalid && (investmentForm.controls['purchaseDate'].dirty || investmentForm.controls['purchaseDate'].touched)"
+                  class="invalid-feedback">
+                  <div *ngIf="investmentForm.controls['purchaseDate'].errors?.['required']">Purchase date is required.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="quantity" class="form-label">Quantity <span class="text-danger">*</span></label>
+                <input type="number" id="quantity" class="form-control" formControlName="quantity"
+                  placeholder="e.g., 10"
+                  [ngClass]="{ 'is-invalid': investmentForm.controls['quantity'].invalid && (investmentForm.controls['quantity'].dirty || investmentForm.controls['quantity'].touched) }">
+                <div
+                  *ngIf="investmentForm.controls['quantity'].invalid && (investmentForm.controls['quantity'].dirty || investmentForm.controls['quantity'].touched)"
+                  class="invalid-feedback">
+                  <div *ngIf="investmentForm.controls['quantity'].errors?.['required']">Quantity is required.</div>
+                  <div *ngIf="investmentForm.controls['quantity'].errors?.['min']">Quantity must be greater than 0.
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="purchasePrice" class="form-label">Purchase Price (per unit) <span
+                    class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input type="number" id="purchasePrice" class="form-control" formControlName="purchasePrice"
+                    placeholder="e.g., 150.50" step="0.01"
+                    [ngClass]="{ 'is-invalid': investmentForm.controls['purchasePrice'].invalid && (investmentForm.controls['purchasePrice'].dirty || investmentForm.controls['purchasePrice'].touched) }">
+                  <div
+                    *ngIf="investmentForm.controls['purchasePrice'].invalid && (investmentForm.controls['purchasePrice'].dirty || investmentForm.controls['purchasePrice'].touched)"
+                    class="invalid-feedback">
+                    <div *ngIf="investmentForm.controls['purchasePrice'].errors?.['required']">Purchase price is
+                      required.</div>
+                    <div *ngIf="investmentForm.controls['purchasePrice'].errors?.['min']">Purchase price must be greater
+                      than 0.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="currentPrice" class="form-label">Current Price (per unit, optional)</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="number" id="currentPrice" class="form-control" formControlName="currentPrice"
+                  placeholder="e.g., 170.25 (leave blank if same as purchase)" step="0.01"
+                  [ngClass]="{ 'is-invalid': investmentForm.controls['currentPrice'].invalid && (investmentForm.controls['currentPrice'].dirty || investmentForm.controls['currentPrice'].touched) }">
+                <div
+                  *ngIf="investmentForm.controls['currentPrice'].invalid && (investmentForm.controls['currentPrice'].dirty || investmentForm.controls['currentPrice'].touched)"
+                  class="invalid-feedback">
+                  <div *ngIf="investmentForm.controls['currentPrice'].errors?.['min']">Current price cannot be negative.
+                  </div>
+                </div>
+              </div>
+              <div class="form-text">If left blank, current value calculations will use the purchase price.</div>
+            </div>
+
+
+            <hr class="my-4">
+
+            <div class="d-flex justify-content-end gap-2">
+              <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">
+                <i class="fas fa-times me-2"></i>Cancel
+              </button>
+              <button type="submit" class="btn btn-primary" [disabled]="investmentForm.invalid || isSubmitting">
+                <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"
+                  aria-hidden="true"></span>
+                <i *ngIf="!isSubmitting" class="fas {{ isEditMode ? 'fa-save' : 'fa-plus-circle' }} me-2"></i>
+                {{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update Investment' : 'Add Investment') }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

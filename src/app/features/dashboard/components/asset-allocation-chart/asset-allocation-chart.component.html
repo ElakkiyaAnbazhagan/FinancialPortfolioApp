@@ -1,0 +1,25 @@
+<div class="card shadow-sm h-100"> <div class="card-header">
+    <h5 class="card-title mb-0">Asset Allocation</h5>
+  </div>
+  <div class="card-body d-flex flex-column"> <div *ngIf="isLoading; else chartContent" class="flex-grow-1 d-flex align-items-center justify-content-center placeholder-glow">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    <ng-template #chartContent>
+      <div *ngIf="chartData && chartData.labels && chartData.labels.length > 0; else noData" class="chart-container flex-grow-1" style="position: relative; min-height: 300px;">
+        <canvas baseChart class="chart"
+          [data]="pieChartData"
+          [type]="pieChartType"
+          [options]="pieChartOptions"
+          [plugins]="pieChartPlugins">
+        </canvas>
+      </div>
+      <ng-template #noData>
+        <div class="flex-grow-1 d-flex align-items-center justify-content-center text-muted">
+          <p class="mb-0">No allocation data available to display.</p>
+        </div>
+      </ng-template>
+    </ng-template>
+  </div>
+</div>

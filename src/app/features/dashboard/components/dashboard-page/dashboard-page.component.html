@@ -1,0 +1,40 @@
+<div class="container mt-3"> <div class="row mb-4">
+    <div class="col">
+      <h1 class="h2">Dashboard</h1>
+      <hr>
+    </div>
+  </div>
+
+  <app-portfolio-summary
+    [summary]="portfolioSummary$ | async"
+     [isLoading]="isLoadingSummary"
+   >
+  </app-portfolio-summary>
+
+  <div class="row mt-4 gy-4"> <div class="col-lg-7 col-md-12 mb-3 mb-lg-0"> 
+    <app-performance-chart
+        [chartData]="portfolioPerformanceData$ | async"
+        [isLoading]="isLoadingPerformance"
+        >
+      </app-performance-chart>
+    </div>
+    <div class="col-lg-5 col-md-12">
+      <app-asset-allocation-chart
+        [chartData]="assetAllocationData$ | async"
+        [isLoading]="isLoadingAllocation"
+      >
+      </app-asset-allocation-chart>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col">
+      <app-market-trends
+        [trends]="marketTrends$ | async"
+        [isLoading]="isLoadingTrends"
+      >
+      </app-market-trends>
+    </div>
+  </div>
+
+</div>
